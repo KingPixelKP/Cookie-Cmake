@@ -1,3 +1,3 @@
-include(tools.cmake)
-include(package.cmake)
-include(workspace.cmake)
+include(tools)
+include(package)
+include(workspace)
