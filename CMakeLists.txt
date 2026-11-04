@@ -1,4 +1,8 @@
 cmake_minimum_required(VERSION 3.25)
 project(CookieCmake VERSION 1.0.0 LANGUAGES CXX)
 
-include(cmake/cookie.cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+include(tools)
+include(package)
+include(workspace)
+include(CPM)
