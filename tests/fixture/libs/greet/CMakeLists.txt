@@ -1,0 +1,1 @@
+package(LIB_TYPE STATIC)
