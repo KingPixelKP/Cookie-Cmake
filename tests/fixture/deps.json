@@ -1,0 +1,5 @@
+{
+  "fmt": { "package": "fmt", "version": "10...<100" },
+  "gtest": { "package": "GTest", "kind": "test" },
+  "gbenchmark": { "package": "benchmark", "kind": "bench" }
+}

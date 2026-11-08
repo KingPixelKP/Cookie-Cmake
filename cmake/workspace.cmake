@@ -79,8 +79,10 @@ function(workspace)
 
     list(REMOVE_DUPLICATES _workspace_members)
 
+    # An empty workspace is valid, e.g. an app that has no libraries yet.
     if(NOT _workspace_members)
-        message(FATAL_ERROR "workspace(): No workspace members remain after filtering")
+        message(STATUS "workspace(): No workspace members found")
+        return()
     endif()
 
     message(STATUS "workspace(): Configuring workspace members: ${_workspace_members}")
