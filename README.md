@@ -144,3 +144,7 @@ A workspace with no members is valid.
 ```bash
 nix flake check   # configures, builds and tests the projects in tests/
 ```
+
+## License
+
+[MIT](./LICENSE).
