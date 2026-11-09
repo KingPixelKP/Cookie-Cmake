@@ -121,10 +121,23 @@ A workspace with no members is valid.
 | Function | Purpose |
 | --- | --- |
 | `configure_project_tooling()` | Uses `lld` when available; enables clang-tidy / cppcheck when `_ENABLE_CLANG_TIDY` / `_ENABLE_CPPCHECK` are ON. |
-| `configure_target(target)` | Applies the project warnings, sanitizers (`_SANITIZERS`) and coverage (`_ENABLE_COVERAGE`). `package()` calls it for you. |
+| `configure_target(target)` | Applies the project warnings, sanitizers (`_SANITIZERS`) and coverage (`_ENABLE_COVERAGE`). `package()` calls it for you. See below. |
 | `add_coverage_report_target()` | `coverage-report` target via `gcovr`. |
 | `add_format_target()` | `format` target via `clang-format`. |
 | `install_project_target(target)` / `install_project_headers(dir)` | Install and export rules when `_INSTALL` is ON. |
+
+### What `configure_target()` turns on
+
+- **Warnings (GCC and Clang):** `${PROJECT_NAME_UPPER}_COMPILE_DEFINITIONS` plus `-Wconversion
+  -Wsign-conversion -Wshadow -Wnon-virtual-dtor -Wold-style-cast -Woverloaded-virtual
+  -Wnull-dereference -Wdouble-promotion -Wformat=2 -Wimplicit-fallthrough -Wcast-align`. MSVC gets
+  `/W4 /permissive- /WX`.
+- **Bounds checks in Debug builds:** `_GLIBCXX_ASSERTIONS`, so libstdc++ aborts with a message on
+  out-of-range `operator[]`, `front()` on an empty container and similar, much like a Rust panic.
+  It is ABI-compatible and has no effect with libc++, whose own hardening mode toolchains such as
+  Nix already enable.
+- **Coverage** (`_ENABLE_COVERAGE`): `--coverage`. Use a Debug build; `add_coverage_report_target()`
+  warns about optimized ones.
 
 ## Development
 

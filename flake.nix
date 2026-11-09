@@ -35,6 +35,12 @@
           '';
         };
 
+        # Same project as a Debug build: bounds checks must be active.
+        fixture-debug = self.checks.${pkgs.stdenv.hostPlatform.system}.fixture.overrideAttrs {
+          name = "cookie-cmake-fixture-debug";
+          cmakeBuildType = "Debug";
+        };
+
         empty = pkgs.runCommandCC "cookie-cmake-empty" { nativeBuildInputs = [ pkgs.cmake ]; } ''
           cmake -S ${self}/tests/empty -B build
           touch $out

@@ -63,9 +63,31 @@ function(configure_target TARGET_NAME)
         cxx_std_${CMAKE_CXX_STANDARD}
     )
 
+    # Debug builds check container bounds and preconditions in libstdc++
+    # (out-of-range operator[], front() on empty, ...) and abort with a message,
+    # much like a Rust panic. ABI-compatible and a no-op with libc++, whose own
+    # hardening mode toolchains such as Nix already enable.
+    target_compile_definitions(
+        ${TARGET_NAME}
+        ${_scope}
+        $<$<CONFIG:Debug>:_GLIBCXX_ASSERTIONS>
+    )
+
     set(_compile_options ${${PROJECT_NAME_UPPER}_COMPILE_DEFINITIONS})
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-        list(APPEND _compile_options -Wconversion -Wsign-conversion)
+        list(APPEND _compile_options
+            -Wconversion
+            -Wsign-conversion
+            -Wshadow
+            -Wnon-virtual-dtor
+            -Wold-style-cast
+            -Woverloaded-virtual
+            -Wnull-dereference
+            -Wdouble-promotion
+            -Wformat=2
+            -Wimplicit-fallthrough
+            -Wcast-align
+        )
     elseif(MSVC)
         set(_compile_options /W4 /permissive- /WX)
     endif()
