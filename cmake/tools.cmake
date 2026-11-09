@@ -107,9 +107,10 @@ function(configure_target TARGET_NAME)
                 ${TARGET_NAME}
                 ${_scope}
                 --coverage
-                -O0
-                -g
             )
+            # No explicit -O0/-g: use a Debug build for coverage. A bare -O0
+            # makes toolchains that add _FORTIFY_SOURCE when they see -O (Nix's
+            # wrapper) emit a warning, which -Werror turns into an error.
 
             target_link_options(
                 ${TARGET_NAME}
@@ -215,6 +216,14 @@ function(add_coverage_report_target)
         return()
     endif()
 
+    # Coverage relies on the build type for -O0 (Debug, or no build type).
+    if(CMAKE_BUILD_TYPE MATCHES "^(Release|RelWithDebInfo|MinSizeRel)$")
+        message(WARNING
+            "Coverage with CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}: optimizations make the report "
+            "inaccurate; use a Debug build"
+        )
+    endif()
+
     find_program(GCOVR_PROGRAM gcovr)
     set(_gcovr_command)
 
@@ -243,6 +252,7 @@ function(add_coverage_report_target)
             --object-directory "${CMAKE_BINARY_DIR}"
             --html-details "${_coverage_html}"
             --xml-pretty --output "${_coverage_xml}"
+            --print-summary
             --exclude "${CMAKE_BINARY_DIR}/.*"
             --exclude ".*/generated/.*"
             --exclude ".*/_autogen/.*"
