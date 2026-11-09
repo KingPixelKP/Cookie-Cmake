@@ -54,6 +54,19 @@
               grep -q 'version range' log
               touch $out
             '';
+
+        # Uses a fake package (tests/components/prefix) that provides two components.
+        components = pkgs.runCommandCC "cookie-cmake-components" { nativeBuildInputs = [ pkgs.cmake ]; } ''
+          cmake -S ${self}/tests/components/ok -B ok | tee log
+          grep -q 'Shapes 1.0.0 \[circle square\]' log
+
+          if cmake -S ${self}/tests/components/missing -B missing > log 2>&1; then
+            echo "configure succeeded although a required component is missing" >&2
+            exit 1
+          fi
+          grep -q 'no component "hexagon"' log
+          touch $out
+        '';
       });
 
       formatter = forAllSystems (pkgs: pkgs.nixfmt);

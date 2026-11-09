@@ -100,6 +100,7 @@ Reads a JSON manifest (default `${CMAKE_SOURCE_DIR}/deps.json`) and calls
 | key | Dependency name. Other tools can reuse it, e.g. a flake can treat it as the nixpkgs attribute. |
 | `package` | `find_package` name. Default: the key. |
 | `version` | Version requirement passed to `find_package`: a minimum (`"11.1"`) or a range (`"11...<13"`). Configuring fails when the installed version does not satisfy it. Ranges need a version file that supports them, which `write_basic_package_version_file` generates. |
+| `components` | Array of required components, passed as `find_package(... COMPONENTS ...)`, e.g. `["Core", "Widgets"]` for Qt6. |
 | `kind` | `build` (default, always found), `test` (only with `_BUILD_TESTS`) or `bench` (only with `_BUILD_BENCHMARKS`). |
 
 Use `dependencies(FILE path/to/deps.json)` for a different location.
